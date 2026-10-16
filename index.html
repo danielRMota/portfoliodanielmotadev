@@ -11,6 +11,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>if (!matchMedia("(prefers-reduced-motion: reduce)").matches) { document.documentElement.classList.add("motion"); setTimeout(function () { var r = document.documentElement; if (!r.classList.contains("motion-ready")) r.classList.remove("motion"); }, 3000); }</script>
+  <script src="assets/vendor/gsap.min.js" defer></script>
+  <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="assets/vendor/lenis.min.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body data-whatsapp="558389038017" data-email="danielmotaita@gmail.com">
@@ -30,41 +34,47 @@
         <a class="nav-cta" href="#contato">Fale do seu projeto</a>
       </nav>
     </div>
+    <span class="scroll-progress" aria-hidden="true"></span>
   </header>
 
   <main id="conteudo">
     <section class="hero section" id="inicio">
       <div class="container hero-grid">
-        <div class="hero-copy reveal">
-          <h1>Seu negócio merece um site que <span>abre caminhos.</span></h1>
+        <div class="hero-copy">
+          <h1 data-split>Seu negócio merece um site que <span class="accent">abre caminhos.</span></h1>
           <p class="hero-lead">Crio sites e landing pages que apresentam seu trabalho com clareza, passam confiança e facilitam o próximo passo do cliente.</p>
         </div>
-        <div class="hero-art reveal reveal-delay" aria-label="Logo Daniel Mota com símbolo de buraco negro e código">
+        <div class="hero-art" aria-label="Logo Daniel Mota com símbolo de buraco negro e código">
           <figure class="logo-frame"><img src="assets/logo-animada.gif" alt="Logo Daniel Mota — Desenvolvimento de Sites, com um buraco negro e o símbolo de código menor e maior que"></figure>
         </div>
       </div>
     </section>
 
+    <div class="velocity" aria-hidden="true">
+      <div class="velocity-row" data-velocity="1"><div class="velocity-track"><span>Landing pages</span><i>&lt;/&gt;</i><span>Sites institucionais</span><i>&lt;/&gt;</i><span>Redesign</span><i>&lt;/&gt;</i></div></div>
+      <div class="velocity-row velocity-row-outline" data-velocity="-1"><div class="velocity-track"><span>Credibilidade</span><i>&lt;/&gt;</i><span>Clareza</span><i>&lt;/&gt;</i><span>Feito para o celular</span><i>&lt;/&gt;</i></div></div>
+    </div>
+
     <section class="benefits section section-light" id="beneficios">
       <div class="container">
-        <div class="section-heading reveal">
+        <div class="section-heading">
           <h2>Um site bem pensado trabalha a favor do seu negócio.</h2>
           <p>Uma presença digital organizada ajuda as pessoas a entenderem o que você faz, por que escolher você e como entrar em contato.</p>
         </div>
         <div class="benefit-grid">
-          <article class="benefit-card reveal">
+          <article class="benefit-card">
             <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M7 15l4-4 3 2 5-6"/><path d="M16 7h3v3"/></svg></div>
             <h3>Mais credibilidade</h3><p>Apresente sua empresa com uma imagem profissional e coerente com a qualidade do seu trabalho.</p>
           </article>
-          <article class="benefit-card reveal reveal-delay-sm">
+          <article class="benefit-card">
             <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="15" r="3"/><path d="m20.3 17.3 1.2 1.2"/></svg></div>
             <h3>Informação clara</h3><p>Organize serviços, diferenciais e informações importantes em uma página fácil de entender.</p>
           </article>
-          <article class="benefit-card reveal">
+          <article class="benefit-card">
             <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 17h4"/></svg></div>
             <h3>Boa experiência no celular</h3><p>Seu conteúdo se adapta a diferentes telas para que o visitante navegue com conforto.</p>
           </article>
-          <article class="benefit-card reveal reveal-delay-sm">
+          <article class="benefit-card">
             <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></div>
             <h3>Próximo passo evidente</h3><p>Chamadas para ação ajudam a direcionar o visitante para orçamento, agendamento ou contato.</p>
           </article>
@@ -74,14 +84,14 @@
 
     <section class="services section" id="servicos">
       <div class="container">
-        <div class="section-heading section-heading-row reveal">
+        <div class="section-heading section-heading-row">
           <div><h2>Um formato certo para cada objetivo.</h2></div>
           <p>O projeto começa pela necessidade do seu negócio. A partir dela, definimos a estrutura, o conteúdo e o caminho mais adequado.</p>
         </div>
         <div class="service-list">
-          <article class="service-row reveal"><div><h3>Landing page</h3><p>Uma página direta para apresentar uma oferta, serviço ou campanha e conduzir o visitante a uma ação.</p></div><span class="service-tag">FOCO EM AÇÃO</span></article>
-          <article class="service-row reveal"><div><h3>Site institucional</h3><p>Uma presença online para explicar quem você é, o que oferece e como as pessoas podem encontrar sua empresa.</p></div><span class="service-tag">SUA MARCA ONLINE</span></article>
-          <article class="service-row reveal"><div><h3>Redesign de site</h3><p>Uma nova organização visual e de conteúdo para deixar uma página existente mais atual, clara e simples de navegar.</p></div><span class="service-tag">NOVA EXPERIÊNCIA</span></article>
+          <article class="service-row"><span class="service-index">01</span><div><h3>Landing page</h3><p>Uma página direta para apresentar uma oferta, serviço ou campanha e conduzir o visitante a uma ação.</p></div><span class="service-tag">FOCO EM AÇÃO</span><span class="service-arrow" aria-hidden="true">→</span></article>
+          <article class="service-row"><span class="service-index">02</span><div><h3>Site institucional</h3><p>Uma presença online para explicar quem você é, o que oferece e como as pessoas podem encontrar sua empresa.</p></div><span class="service-tag">SUA MARCA ONLINE</span><span class="service-arrow" aria-hidden="true">→</span></article>
+          <article class="service-row"><span class="service-index">03</span><div><h3>Redesign de site</h3><p>Uma nova organização visual e de conteúdo para deixar uma página existente mais atual, clara e simples de navegar.</p></div><span class="service-tag">NOVA EXPERIÊNCIA</span><span class="service-arrow" aria-hidden="true">→</span></article>
         </div>
         <div class="service-footnote">Cada projeto é pensado para o contexto, o público e a identidade do negócio.</div>
       </div>
@@ -89,34 +99,24 @@
 
     <section class="portfolio section section-light" id="portfolio">
       <div class="container">
-        <div class="project-intro reveal">
+        <div class="project-intro">
           <div>
             <h2>Exemplos de Sites feitos</h2>
             <p>Projeto em destaque: MotaLab Clínica — site para apresentar a clínica, seus serviços e o Cartão MotaLab.</p>
           </div>
           <a class="project-live-link" href="https://motalabclinica.com.br" target="_blank" rel="noopener noreferrer">Visitar o site</a>
         </div>
-        <div class="project-carousel reveal" data-carousel aria-label="Carrossel do projeto MotaLab Clínica">
+        <div class="project-carousel" data-carousel aria-label="Demonstração do projeto MotaLab Clínica">
           <div class="carousel-viewport">
             <div class="carousel-track" data-carousel-track aria-live="polite">
-              <article class="project-slide" data-slide="0">
-                <div class="project-shot"><img src="assets/motalab-home.webp" alt="Página inicial do site MotaLab Clínica, com apresentação da clínica, serviços, exames e consultas" loading="lazy"></div>
-                <div class="slide-caption"><div><span class="slide-category">SITE INSTITUCIONAL</span><h3>Uma clínica completa, apresentada de perto.</h3></div><p>Apresentação da MotaLab, dos serviços e das opções de atendimento.</p></div>
+              <article class="project-slide project-slide-video" data-slide="0">
+                <div class="project-shot">
+                  <video class="project-video" data-demo-video src="assets/motalab-demo.mp4" poster="assets/motalab-demo-poster.webp" muted loop playsinline preload="metadata" aria-label="Gravação de tela navegando pelo site da MotaLab Clínica: combos de exames, equipe de especialistas, Cartão MotaLab e cadastro"></video>
+                  <button class="video-toggle" type="button" data-video-toggle aria-label="Reproduzir vídeo"><span class="video-toggle-icon" aria-hidden="true"></span></button>
+                  <span class="video-progress" aria-hidden="true"><span data-video-progress></span></span>
+                </div>
+                <div class="slide-caption"><div><span class="slide-category">NAVEGAÇÃO REAL</span><h3>O site em uso, do começo ao cadastro.</h3></div><p>Gravação navegando pelo site: combos de exames, equipe, Cartão MotaLab e cadastro.</p></div>
               </article>
-              <article class="project-slide" data-slide="1">
-                <div class="project-shot"><img src="assets/motalab-cartao.webp" alt="Página do Cartão MotaLab, com detalhes dos benefícios e chamada para adesão" loading="lazy"></div>
-                <div class="slide-caption"><div><span class="slide-category">PÁGINA DO CARTÃO MOTALAB</span><h3>Benefícios em uma experiência dedicada.</h3></div><p>Uma página própria para explicar o cartão e destacar seus benefícios.</p></div>
-              </article>
-            </div>
-          </div>
-          <div class="carousel-bottom">
-            <div class="carousel-dots" role="group" aria-label="Escolher tela do projeto">
-              <button class="carousel-dot is-active" type="button" aria-label="Mostrar página inicial" aria-current="true" data-carousel-dot="0"></button>
-              <button class="carousel-dot" type="button" aria-label="Mostrar página do Cartão MotaLab" aria-current="false" data-carousel-dot="1"></button>
-            </div>
-            <div class="carousel-controls">
-              <button class="carousel-arrow" type="button" aria-label="Imagem anterior" data-carousel-prev>←</button>
-              <button class="carousel-arrow" type="button" aria-label="Próxima imagem" data-carousel-next>→</button>
             </div>
           </div>
         </div>
@@ -125,27 +125,27 @@
 
     <section class="process section" id="processo">
       <div class="container process-grid">
-        <div class="section-heading reveal"><h2>Um processo simples, com você por perto.</h2><p>Você acompanha as decisões e sabe o que vem em cada etapa do desenvolvimento.</p><a class="text-link process-link" href="#contato">Conte sua ideia</a></div>
-        <div class="steps">
-          <article class="step reveal"><span>01</span><div><h3>Entendimento</h3><p>Conversamos sobre seu negócio, seu público e o que o site precisa alcançar.</p></div></article>
-          <article class="step reveal"><span>02</span><div><h3>Estrutura e conteúdo</h3><p>Organizamos as informações para que a mensagem seja clara e a navegação faça sentido.</p></div></article>
-          <article class="step reveal"><span>03</span><div><h3>Design e desenvolvimento</h3><p>Transformo a estrutura em uma experiência visual responsiva, alinhada à sua marca.</p></div></article>
-          <article class="step reveal"><span>04</span><div><h3>Revisão e entrega</h3><p>Revisamos o resultado juntos e alinhamos os próximos passos para publicar seu site.</p></div></article>
+        <div class="section-heading"><h2>Um processo simples, com você por perto.</h2><p>Você acompanha as decisões e sabe o que vem em cada etapa do desenvolvimento.</p><a class="text-link process-link" href="#contato">Conte sua ideia</a></div>
+        <div class="steps"><span class="steps-track" aria-hidden="true"><span class="steps-beam"></span></span>
+          <article class="step"><span>01</span><div><h3>Entendimento</h3><p>Conversamos sobre seu negócio, seu público e o que o site precisa alcançar.</p></div></article>
+          <article class="step"><span>02</span><div><h3>Estrutura e conteúdo</h3><p>Organizamos as informações para que a mensagem seja clara e a navegação faça sentido.</p></div></article>
+          <article class="step"><span>03</span><div><h3>Design e desenvolvimento</h3><p>Transformo a estrutura em uma experiência visual responsiva, alinhada à sua marca.</p></div></article>
+          <article class="step"><span>04</span><div><h3>Revisão e entrega</h3><p>Revisamos o resultado juntos e alinhamos os próximos passos para publicar seu site.</p></div></article>
         </div>
       </div>
     </section>
 
     <section class="about section section-light" id="sobre">
       <div class="container about-grid">
-        <div class="about-symbol reveal"><img src="assets/logo.png" alt="Logo de Daniel Mota: um buraco negro com o símbolo de código e o texto Desenvolvimento de Sites"></div>
-        <div class="about-copy reveal reveal-delay"><h2>Oi, eu sou o Daniel.</h2><p>Ajudo empresas e profissionais a apresentarem seu trabalho na internet com sites organizados, modernos e fáceis de navegar.</p><p>Acredito que um bom site une uma mensagem clara, um visual cuidadoso e uma experiência que respeita o tempo de quem visita.</p><a href="#contato" class="button button-dark">Vamos tirar sua ideia do papel</a></div>
+        <div class="about-symbol"><img src="assets/logo.png" alt="Logo de Daniel Mota: um buraco negro com o símbolo de código e o texto Desenvolvimento de Sites"></div>
+        <div class="about-copy"><h2>Oi, eu sou o Daniel.</h2><p>Ajudo empresas e profissionais a apresentarem seu trabalho na internet com sites organizados, modernos e fáceis de navegar.</p><p>Acredito que um bom site une uma mensagem clara, um visual cuidadoso e uma experiência que respeita o tempo de quem visita.</p><a href="#contato" class="button button-dark">Vamos tirar sua ideia do papel</a></div>
       </div>
     </section>
 
     <section class="faq section" id="duvidas">
       <div class="container faq-grid">
-        <div class="section-heading reveal"><h2>Antes de começar.</h2><p>Um projeto bem alinhado começa com expectativas claras.</p></div>
-        <div class="faq-list reveal">
+        <div class="section-heading"><h2>Antes de começar.</h2><p>Um projeto bem alinhado começa com expectativas claras.</p></div>
+        <div class="faq-list">
           <details><summary>O que preciso para começar um site?<span>+</span></summary><p>Uma conversa sobre seu negócio e seus objetivos já é um ótimo começo. Depois alinhamos conteúdo, referências, identidade visual e materiais disponíveis.</p></details>
           <details><summary>O site funciona em celular e computador?<span>+</span></summary><p>Sim. A experiência é planejada para se adaptar a diferentes tamanhos de tela e facilitar a navegação em cada dispositivo.</p></details>
           <details><summary>Posso pedir alterações durante o projeto?<span>+</span></summary><p>Sim. As etapas incluem momentos de revisão para que possamos avaliar o trabalho e alinhar ajustes em conjunto.</p></details>
@@ -155,7 +155,7 @@
     </section>
 
     <section class="contact section" id="contato">
-      <div class="container contact-panel reveal">
+      <div class="container contact-panel">
         <div class="contact-orbit"></div>
         <div class="contact-content"><h2>Vamos criar um site que represente bem o seu negócio?</h2><p>Conte um pouco sobre sua ideia. A gente conversa sobre os objetivos e encontra um bom caminho para o projeto.</p><div class="contact-actions"><a class="button button-primary" id="contact-cta" href="https://wa.me/558389038017" target="_blank" rel="noopener noreferrer">Falar pelo WhatsApp</a><a class="contact-email" href="mailto:danielmotaita@gmail.com">ou envie um e-mail</a></div><small class="contact-hint">WhatsApp: (83) 8903-8017 · danielmotaita@gmail.com</small></div>
         <div class="contact-art" aria-hidden="true"><span class="contact-ring ring-a"></span><span class="contact-ring ring-b"></span><span class="contact-core">&lt;<i></i>&gt;</span><span class="contact-dot dot-a"></span><span class="contact-dot dot-b"></span></div>
@@ -187,14 +187,5 @@
       <div class="footer-bottom"><span>© <span id="year"></span> Daniel Mota. Todos os direitos reservados.</span></div>
     </div>
   </footer>
-  <div class="void-mascot" aria-hidden="true" data-mascot="inicio">
-    <span class="mascot-bubble">Oi! 👋</span>
-    <span class="mascot-aura"></span>
-    <span class="mascot-body">
-      <span class="mascot-eye eye-left"></span><span class="mascot-eye eye-right"></span>
-      <span class="mascot-mouth"></span>
-    </span>
-    <span class="mascot-foot foot-left"></span><span class="mascot-foot foot-right"></span>
-  </div>
 </body>
 </html>
