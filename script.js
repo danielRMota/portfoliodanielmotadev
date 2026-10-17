@@ -116,12 +116,24 @@ if (carousel) {
         video.pause();
       }
     });
+    const loadVideo = () => {
+      if (video.getAttribute("src")) return;
+      const small = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
+      video.src = (small && video.dataset.srcMobile) || video.dataset.src;
+      video.preload = "auto";
+    };
     if ("IntersectionObserver" in window) {
+      const nearObserver = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) { loadVideo(); nearObserver.disconnect(); }
+      }, { rootMargin: "600px 0px" });
+      nearObserver.observe(carousel);
       new IntersectionObserver(([entry]) => {
         carouselInView = entry.isIntersecting;
+        if (carouselInView) loadVideo();
         syncVideo();
       }, { threshold: 0.35 }).observe(carousel);
     } else {
+      loadVideo();
       carouselInView = true;
     }
   }
@@ -200,11 +212,16 @@ function initMotion() {
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  // Phones / touch devices (incl. Instagram's in-app browser) get the same story with cheaper effects:
+  // native scroll, no clip-path repaints, CSS-driven marquee.
+  const lite = window.matchMedia("(hover: none), (pointer: coarse), (max-width: 900px)").matches;
   const header = document.querySelector(".site-header");
+  // Android shows/hides the address bar while scrolling; don't recalculate everything on each of those resizes.
+  ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
 
-  /* Smooth scroll */
+  /* Smooth scroll (desktop only — touch keeps the phone's own native scroll) */
   let lenis = null;
-  if (typeof window.Lenis !== "undefined") {
+  if (!lite && typeof window.Lenis !== "undefined") {
     lenis = new window.Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
     lenis.on("scroll", ScrollTrigger.update);
     gsap.ticker.add((time) => lenis.raf(time * 1000));
@@ -250,12 +267,15 @@ function initMotion() {
   const heroWords = heroTitle ? splitWords(heroTitle, "word", "word-inner") : [];
   gsap.set(heroWords, { yPercent: 118 });
   gsap.set(".hero-lead", { autoAlpha: 0, y: 26 });
-  gsap.set(".logo-frame", { clipPath: "circle(0% at 50% 50%)", rotate: -40, scale: 1.1 });
+  if (lite) gsap.set(".logo-frame", { opacity: 0, rotate: -40, scale: 0.6 });
+  else gsap.set(".logo-frame", { clipPath: "circle(0% at 50% 50%)", rotate: -40, scale: 1.1 });
   root.classList.add("motion-ready");
 
   gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.1 })
-    .to(heroWords, { yPercent: 0, duration: 1.3, stagger: 0.06 })
-    .to(".logo-frame", { clipPath: "circle(71% at 50% 50%)", rotate: 0, scale: 1, duration: 1.7, ease: "expo.inOut" }, 0)
+    .to(heroWords, { yPercent: 0, duration: 1.3, stagger: 0.06, clearProps: "transform" })
+    .to(".logo-frame", lite
+      ? { opacity: 1, rotate: 0, scale: 1, duration: 1.4, ease: "expo.out" }
+      : { clipPath: "circle(71% at 50% 50%)", rotate: 0, scale: 1, duration: 1.7, ease: "expo.inOut", clearProps: "clipPath" }, 0)
     .to(".hero-lead", { autoAlpha: 1, y: 0, duration: 1.1 }, 0.6);
 
   /* Hero leaves: copy lifts and fades, logo recedes and turns */
@@ -286,7 +306,19 @@ function initMotion() {
     for (let i = 0; i < copies; i += 1) row.appendChild(track.cloneNode(true));
     return { row, track, x: 0, base: Number(row.dataset.velocity) || 1, width: track.offsetWidth };
   });
-  if (velocityRows.length) {
+  if (velocityRows.length && lite) {
+    // CSS animation runs on the compositor: smooth even on modest phones
+    const velocity = document.querySelector(".velocity");
+    const setShift = () => velocityRows.forEach((item) => {
+      const width = item.track.offsetWidth;
+      item.row.style.setProperty("--marquee-shift", `${-width}px`);
+      item.row.style.setProperty("--marquee-duration", `${Math.max(14, width / 45)}s`);
+    });
+    setShift();
+    velocity.classList.add("is-css");
+    ScrollTrigger.create({ trigger: velocity, start: "top bottom", end: "bottom top", onToggle: (self) => velocity.classList.toggle("is-paused", !self.isActive) });
+    window.addEventListener("resize", setShift);
+  } else if (velocityRows.length) {
     let marqueeActive = true;
     let scrollDirection = 1;
     let boost = 0;
@@ -313,8 +345,8 @@ function initMotion() {
   }
 
   /* Headings: word-by-word reveal tied to scroll (Text Reveal) + paragraph wipe */
-  document.querySelectorAll(".section-heading, .project-intro, .about-copy, .contact-content").forEach((block) => {
-    const title = block.querySelector("h2");
+  document.querySelectorAll(".section-heading, .project-intro, .about-copy, .contact-content, .plans-head").forEach((block) => {
+    const title = block.querySelector("h2, h3");
     if (!title) return;
     const words = splitWords(title, "tr-word");
     const supporting = block.querySelectorAll(":scope > p, :scope > div > p, :scope > .text-link, :scope > .button, :scope > .contact-actions, :scope > .contact-hint");
@@ -323,10 +355,14 @@ function initMotion() {
     supporting.forEach((element, index) => {
       // Buttons only get the wipe: their x/y belongs to the magnetic effect.
       const lift = element.classList.contains("button") ? {} : { y: 24 };
-      timeline.fromTo(element,
-        { clipPath: "inset(0% 0% 100% 0%)", ...lift },
-        { clipPath: "inset(-40% -25% -60% -25%)", ...(lift.y ? { y: 0 } : {}), ease: "power2.out", duration: 0.8 },
-        index === 0 ? ">-0.35" : "<0.15");
+      const position = index === 0 ? ">-0.35" : "<0.15";
+      if (lite) {
+        timeline.fromTo(element, { opacity: 0, ...lift }, { opacity: 1, ...(lift.y ? { y: 0 } : {}), ease: "power2.out", duration: 0.8 }, position);
+      } else {
+        timeline.fromTo(element,
+          { clipPath: "inset(0% 0% 100% 0%)", ...lift },
+          { clipPath: "inset(-40% -25% -60% -25%)", ...(lift.y ? { y: 0 } : {}), ease: "power2.out", duration: 0.8 }, position);
+      }
     });
   });
 
@@ -367,11 +403,29 @@ function initMotion() {
     scrollTrigger: { trigger: ".service-footnote", start: "top 96%", end: "top 80%", scrub: 0.6 }
   });
 
+  /* Plans: cards tilt up into place, checklist ticks in, spotlight follows the cursor */
+  gsap.utils.toArray(".plan-card").forEach((card, index) => {
+    gsap.timeline({ scrollTrigger: { trigger: card, start: "top 95%", end: "top 50%", scrub: 0.7 } })
+      .fromTo(card, { y: 110 + index * 40, rotateX: 14, opacity: 0, transformOrigin: "50% 100%" },
+        { y: 0, rotateX: 0, opacity: 1, ease: "power2.out" }, 0)
+      .fromTo(card.querySelectorAll(".plan-list li"), { x: -24, opacity: 0 },
+        { x: 0, opacity: 1, ease: "power2.out", stagger: 0.08 }, 0.35);
+    card.addEventListener("pointermove", (event) => {
+      const box = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${event.clientX - box.left}px`);
+      card.style.setProperty("--my", `${event.clientY - box.top}px`);
+    });
+  });
+  gsap.fromTo(".plans-note", { opacity: 0, y: 16 }, {
+    opacity: 1, y: 0, ease: "none",
+    scrollTrigger: { trigger: ".plans-note", start: "top 98%", end: "top 85%", scrub: 0.6 }
+  });
+
   /* Portfolio: the showcase opens like a window as you scroll */
   gsap.timeline({ scrollTrigger: { trigger: ".project-carousel", start: "top 96%", end: "top 25%", scrub: 0.8 } })
     .fromTo(".project-carousel",
-      { clipPath: "inset(12% 9% 12% 9% round 28px)" },
-      { clipPath: "inset(0% 0% 0% 0% round 10px)", ease: "power1.out" }, 0)
+      lite ? { scale: 0.88, y: 50, opacity: 0.4 } : { clipPath: "inset(12% 9% 12% 9% round 28px)" },
+      lite ? { scale: 1, y: 0, opacity: 1, ease: "power1.out" } : { clipPath: "inset(0% 0% 0% 0% round 10px)", ease: "power1.out" }, 0)
     .fromTo(".project-shot img, .project-shot video", { scale: 1.28 }, { scale: 1, ease: "power1.out" }, 0)
     .fromTo(".slide-caption", { y: 40, opacity: 0 }, { y: 0, opacity: 1, ease: "power1.out" }, 0.35);
 
@@ -393,8 +447,9 @@ function initMotion() {
   }
 
   /* About: portrait unveils from the bottom with depth */
-  gsap.fromTo(".about-symbol", { clipPath: "inset(100% 0% 0% 0%)" }, {
-    clipPath: "inset(0% 0% 0% 0%)", ease: "power2.out",
+  gsap.fromTo(".about-symbol",
+    lite ? { y: 70, opacity: 0 } : { clipPath: "inset(100% 0% 0% 0%)" }, {
+    ...(lite ? { y: 0, opacity: 1 } : { clipPath: "inset(0% 0% 0% 0%)" }), ease: "power2.out",
     scrollTrigger: { trigger: ".about-symbol", start: "top 88%", end: "top 35%", scrub: 0.7 }
   });
   gsap.fromTo(".about-symbol img", { scale: 1.35, yPercent: -6 }, {
@@ -439,14 +494,15 @@ function initMotion() {
   });
 
   /* Contact: panel grows into place, rings turn with the scroll, art follows the cursor */
-  gsap.fromTo(".contact-panel", { scale: 0.9, borderRadius: 40 }, {
-    scale: 1, borderRadius: 9, ease: "none",
+  gsap.fromTo(".contact-panel", lite ? { scale: 0.92 } : { scale: 0.9, borderRadius: 40 }, {
+    ...(lite ? { scale: 1 } : { scale: 1, borderRadius: 9 }), ease: "none",
     scrollTrigger: { trigger: ".contact", start: "top bottom", end: "top 25%", scrub: 0.6 }
   });
   gsap.timeline({ scrollTrigger: { trigger: ".contact", start: "top bottom", end: "bottom top", scrub: true } })
     .fromTo(".contact-orbit", { rotate: -40 }, { rotate: 80, ease: "none" }, 0)
     .fromTo(".ring-a", { rotate: -95 }, { rotate: 25, ease: "none" }, 0)
     .fromTo(".ring-b", { rotate: 40 }, { rotate: -70, ease: "none" }, 0);
+  if (lite) gsap.set(".contact-ring", { force3D: true });
 
   const contactPanel = document.querySelector(".contact-panel");
   if (finePointer && contactPanel) {
