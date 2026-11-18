@@ -24,13 +24,154 @@ if (year) year.textContent = new Date().getFullYear();
 
 const whatsapp = document.body.dataset.whatsapp;
 const email = document.body.dataset.email;
-const contactLink = document.querySelector("#contact-cta");
 const emailLink = document.querySelector(".contact-email");
-if (whatsapp && contactLink) {
+if (whatsapp) {
   const message = "Olá, Daniel! Vi seu portfólio e gostaria de conversar sobre um site para o meu negócio.";
-  contactLink.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+  document.querySelectorAll(".js-whatsapp").forEach((link) => {
+    link.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+  });
 }
 if (email && emailLink) emailLink.href = `mailto:${email}`;
+
+/* ---------- Starfield: fixed background behind the whole site ---------- */
+(() => {
+  const canvas = document.querySelector(".starfield");
+  const ctx = canvas?.getContext?.("2d");
+  if (!ctx) return;
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lite = window.matchMedia("(hover: none), (pointer: coarse), (max-width: 900px)").matches;
+  // far → near: near stars are bigger, brighter and drift faster with the scroll (parallax)
+  const layers = [
+    { depth: 0.03, size: [0.5, 1.1], alpha: [0.25, 0.6], share: 1 },
+    { depth: 0.08, size: [0.8, 1.5], alpha: [0.35, 0.8], share: 0.45 },
+    { depth: 0.16, size: [1.2, 2.1], alpha: [0.55, 1], share: 0.14 }
+  ];
+  const tints = ["#ffffff", "#fff4e2", "#ffe2aa", "#ffc478", "#fff9f0"];
+  const rand = (min, max) => min + Math.random() * (max - min);
+  let stars = [];
+  let width = 0;
+  let height = 0;
+  let frame = 0;
+  let last = 0;
+  let meteor = null;
+  let nextMeteor = performance.now() + rand(3000, 7000);
+
+  // soft warm halo drawn behind the brightest stars
+  const halo = document.createElement("canvas");
+  halo.width = halo.height = 32;
+  const haloCtx = halo.getContext("2d");
+  const haloGradient = haloCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+  haloGradient.addColorStop(0, "rgba(255,240,215,.85)");
+  haloGradient.addColorStop(0.25, "rgba(255,190,110,.3)");
+  haloGradient.addColorStop(1, "rgba(255,145,40,0)");
+  haloCtx.fillStyle = haloGradient;
+  haloCtx.fillRect(0, 0, 32, 32);
+
+  const build = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, lite ? 1.5 : 2);
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const base = (width * height) / (lite ? 4200 : 2600);
+    stars = [];
+    layers.forEach((layer, index) => {
+      for (let i = 0; i < Math.round(base * layer.share); i += 1) {
+        stars.push({
+          x: Math.random() * width, y: Math.random() * height,
+          r: rand(...layer.size), a: rand(...layer.alpha), depth: layer.depth,
+          speed: rand(0.4, 1.7), phase: rand(0, Math.PI * 2),
+          color: Math.random() < 0.75 ? tints[Math.random() < 0.5 ? 0 : 1] : tints[2 + Math.floor(Math.random() * 3)],
+          halo: index === 2 && Math.random() < 0.4
+        });
+      }
+    });
+  };
+
+  const drawMeteor = (time, delta) => {
+    if (!meteor && time > nextMeteor) {
+      const angle = rand(0.35, 0.65) * (Math.random() < 0.5 ? 1 : -1) + Math.PI / 2;
+      meteor = { x: rand(width * 0.15, width * 0.85), y: rand(0, height * 0.35), vx: Math.cos(angle) * 900, vy: Math.sin(angle) * 900, life: 0, span: rand(0.7, 1.1) };
+    }
+    if (!meteor) return;
+    meteor.life += delta;
+    meteor.x += meteor.vx * delta;
+    meteor.y += meteor.vy * delta;
+    const progress = meteor.life / meteor.span;
+    if (progress >= 1) { meteor = null; nextMeteor = time + rand(6000, 13000); return; }
+    const fade = Math.sin(progress * Math.PI);
+    const tailX = meteor.x - meteor.vx * 0.16;
+    const tailY = meteor.y - meteor.vy * 0.16;
+    const trail = ctx.createLinearGradient(meteor.x, meteor.y, tailX, tailY);
+    trail.addColorStop(0, `rgba(255,236,200,${0.9 * fade})`);
+    trail.addColorStop(0.3, `rgba(255,160,70,${0.35 * fade})`);
+    trail.addColorStop(1, "rgba(255,145,40,0)");
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = trail;
+    ctx.lineWidth = 1.6;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(meteor.x, meteor.y);
+    ctx.lineTo(tailX, tailY);
+    ctx.stroke();
+  };
+
+  const draw = (time, delta) => {
+    ctx.clearRect(0, 0, width, height);
+    const scroll = still ? 0 : window.scrollY;
+    const seconds = time / 1000;
+    for (const star of stars) {
+      let y = (star.y - scroll * star.depth) % height;
+      if (y < 0) y += height;
+      const alpha = star.a * (still ? 1 : 0.6 + 0.4 * Math.sin(seconds * star.speed + star.phase));
+      if (star.halo) {
+        const size = star.r * 8;
+        ctx.globalAlpha = alpha * 0.7;
+        ctx.drawImage(halo, star.x - size / 2, y - size / 2, size, size);
+      }
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = star.color;
+      if (star.r < 1.2) {
+        ctx.fillRect(star.x - star.r / 2, y - star.r / 2, star.r, star.r);
+      } else {
+        ctx.beginPath();
+        ctx.arc(star.x, y, star.r / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    if (!still && !lite) drawMeteor(time, delta);
+    ctx.globalAlpha = 1;
+  };
+
+  // phones redraw at ~30 fps to save battery
+  const minGap = lite ? 1000 / 30 : 0;
+  const loop = (time) => {
+    frame = requestAnimationFrame(loop);
+    if (time - last < minGap) return;
+    const delta = Math.min((time - last) / 1000, 0.1);
+    last = time;
+    draw(time, delta);
+  };
+  const start = () => { if (!frame && !still) { last = performance.now(); frame = requestAnimationFrame(loop); } };
+  const stop = () => { cancelAnimationFrame(frame); frame = 0; };
+
+  build();
+  draw(performance.now(), 0);
+  start();
+
+  let builtWidth = width;
+  let builtHeight = height;
+  window.addEventListener("resize", () => {
+    // ignore the small height changes of mobile address bars
+    if (canvas.clientWidth === builtWidth && Math.abs(canvas.clientHeight - builtHeight) < 150) return;
+    build();
+    builtWidth = width;
+    builtHeight = height;
+    draw(performance.now(), 0);
+  });
+  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+})();
 
 /* ---------- Carousel ---------- */
 const carousel = document.querySelector("[data-carousel]");
@@ -241,6 +382,28 @@ function initMotion() {
   };
   if (lenis) lenis.on("scroll", onScroll); else window.addEventListener("scroll", onScroll, { passive: true });
 
+  // Bring every scroll-driven state (hero, header, reveals) in line with where the page really is.
+  // Runs whenever a scroll settles, so a jump that skipped the usual events can't leave things half-animated.
+  let unlockTimer = 0;
+  const settle = () => {
+    clearTimeout(unlockTimer);
+    headerLocked = false;
+    lastScroll = window.scrollY;
+    if (lastScroll <= 420) header?.classList.remove("is-hidden");
+    ScrollTrigger.update();
+    // if any scroll animation still disagrees with the real position (a missed scroll event), rebuild them all
+    const y = window.scrollY;
+    const stale = ScrollTrigger.getAll().some((trigger) => {
+      if (trigger.end <= trigger.start) return false;
+      const expected = Math.min(1, Math.max(0, (y - trigger.start) / (trigger.end - trigger.start)));
+      return Math.abs(expected - trigger.progress) > 0.02;
+    });
+    if (stale) ScrollTrigger.refresh();
+  };
+  if ("onscrollend" in window) {
+    window.addEventListener("scrollend", () => { if (!lenis || !lenis.isScrolling) settle(); });
+  }
+
   /* In-page anchors glide with Lenis */
   if (lenis) {
     document.querySelectorAll('a[href^="#"]:not(.skip-link)').forEach((link) => {
@@ -251,7 +414,12 @@ function initMotion() {
         event.preventDefault();
         headerLocked = true;
         header?.classList.remove("is-hidden");
-        lenis.scrollTo(target, { offset: -84, duration: 1.5, onComplete: () => { headerLocked = false; } });
+        // the hero is the top of the page: go to exactly 0 instead of an element offset
+        const toTop = target.id === "inicio";
+        lenis.scrollTo(toTop ? 0 : target, { offset: toTop ? 0 : -84, duration: 1.5, force: true, onComplete: settle });
+        // if the glide gets interrupted (wheel, key), never leave the header locked
+        clearTimeout(unlockTimer);
+        unlockTimer = setTimeout(settle, 2200);
       });
     });
   }
@@ -266,37 +434,40 @@ function initMotion() {
   const heroTitle = document.querySelector("[data-split]");
   const heroWords = heroTitle ? splitWords(heroTitle, "word", "word-inner") : [];
   gsap.set(heroWords, { yPercent: 118 });
-  gsap.set(".hero-lead", { autoAlpha: 0, y: 26 });
-  if (lite) gsap.set(".logo-frame", { opacity: 0, rotate: -40, scale: 0.6 });
-  else gsap.set(".logo-frame", { clipPath: "circle(0% at 50% 50%)", rotate: -40, scale: 1.1 });
+  // the supporting paragraph is optional: only animate the hero pieces that are on the page
+  const heroFollow = gsap.utils.toArray(".hero-lead, .hero-actions");
+  gsap.set(heroFollow, { autoAlpha: 0, y: 26 });
+  gsap.set(".blackhole", { autoAlpha: 0, scale: 0.15, rotate: -120 });
   root.classList.add("motion-ready");
 
   gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.1 })
     .to(heroWords, { yPercent: 0, duration: 1.3, stagger: 0.06, clearProps: "transform" })
-    .to(".logo-frame", lite
-      ? { opacity: 1, rotate: 0, scale: 1, duration: 1.4, ease: "expo.out" }
-      : { clipPath: "circle(71% at 50% 50%)", rotate: 0, scale: 1, duration: 1.7, ease: "expo.inOut", clearProps: "clipPath" }, 0)
-    .to(".hero-lead", { autoAlpha: 1, y: 0, duration: 1.1 }, 0.6);
+    .to(".blackhole", { autoAlpha: 1, scale: 1, rotate: 0, duration: lite ? 1.6 : 2, ease: "expo.out" }, 0.1)
+    .to(heroFollow, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.15, clearProps: "transform" }, 0.6);
 
-  /* Hero leaves: copy lifts and fades, logo recedes and turns */
+  /* Hero leaves: copy lifts and fades, the black hole drifts off into space */
   gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } })
     .to(".hero-copy", { yPercent: -22, opacity: 0.15, ease: "none" }, 0)
-    .to(".hero-art", { yPercent: 16, scale: 0.84, rotate: 10, ease: "none" }, 0);
+    .to(".hero-art", { yPercent: 22, xPercent: 8, scale: 0.78, rotate: 14, ease: "none" }, 0);
 
-  /* Hero logo follows the cursor in 3D */
+  /* Hero black hole drifts toward the cursor and tilts in 3D */
   const heroArt = document.querySelector(".hero-art");
-  const logoFrame = document.querySelector(".logo-frame");
-  if (finePointer && heroArt && logoFrame) {
-    const tiltX = gsap.quickTo(logoFrame, "rotationX", { duration: 0.9, ease: "power3" });
-    const tiltY = gsap.quickTo(logoFrame, "rotationY", { duration: 0.9, ease: "power3" });
+  const blackhole = document.querySelector(".blackhole");
+  if (finePointer && heroArt && blackhole) {
+    const tiltX = gsap.quickTo(blackhole, "rotationX", { duration: 1.1, ease: "power3" });
+    const tiltY = gsap.quickTo(blackhole, "rotationY", { duration: 1.1, ease: "power3" });
+    const driftX = gsap.quickTo(blackhole, "x", { duration: 1.6, ease: "power3" });
+    const driftY = gsap.quickTo(blackhole, "y", { duration: 1.6, ease: "power3" });
     document.querySelector(".hero")?.addEventListener("pointermove", (event) => {
       const box = heroArt.getBoundingClientRect();
-      const x = (event.clientX - (box.left + box.width / 2)) / box.width;
-      const y = (event.clientY - (box.top + box.height / 2)) / box.height;
-      tiltY(gsap.utils.clamp(-18, 18, x * 22));
-      tiltX(gsap.utils.clamp(-18, 18, -y * 22));
+      const x = gsap.utils.clamp(-1, 1, (event.clientX - (box.left + box.width / 2)) / box.width);
+      const y = gsap.utils.clamp(-1, 1, (event.clientY - (box.top + box.height / 2)) / box.height);
+      tiltY(x * 20);
+      tiltX(-y * 20);
+      driftX(x * 36);
+      driftY(y * 26);
     });
-    document.querySelector(".hero")?.addEventListener("pointerleave", () => { tiltX(0); tiltY(0); });
+    document.querySelector(".hero")?.addEventListener("pointerleave", () => { tiltX(0); tiltY(0); driftX(0); driftY(0); });
   }
 
   /* Scroll-velocity marquee: speed and direction follow the scroll */
@@ -366,28 +537,19 @@ function initMotion() {
     });
   });
 
-  /* Benefits: cards rise in sequence with the scroll, icons draw themselves, spotlight follows the cursor */
-  const benefitCards = gsap.utils.toArray(".benefit-card");
-  if (benefitCards.length) {
-    gsap.fromTo(benefitCards,
-      { y: (i) => 90 + i * 35, opacity: 0 },
-      { y: 0, opacity: 1, ease: "power2.out", stagger: 0.14,
-        scrollTrigger: { trigger: ".benefit-grid", start: "top 100%", end: "top 58%", scrub: 0.7 } });
-    const strokes = gsap.utils.toArray(".benefit-card .icon-box svg > *");
-    strokes.forEach((shape) => {
-      const length = typeof shape.getTotalLength === "function" ? shape.getTotalLength() : 60;
-      gsap.set(shape, { strokeDasharray: length, strokeDashoffset: length });
-    });
-    gsap.to(strokes, {
-      strokeDashoffset: 0, ease: "none", stagger: 0.05,
-      scrollTrigger: { trigger: ".benefit-grid", start: "top 85%", end: "top 50%", scrub: 0.7 }
-    });
-    benefitCards.forEach((card) => {
-      card.addEventListener("pointermove", (event) => {
-        const box = card.getBoundingClientRect();
-        card.style.setProperty("--mx", `${event.clientX - box.left}px`);
-        card.style.setProperty("--my", `${event.clientY - box.top}px`);
-      });
+  /* Benefits: the constellation is drawn star by star as it scrolls in */
+  const constellation = document.querySelector(".constellation");
+  if (constellation) {
+    const drawLines = getComputedStyle(constellation.querySelector(".constellation-lines") || constellation).display !== "none";
+    const sky = gsap.timeline({ scrollTrigger: { trigger: constellation, start: "top 88%", end: "top 40%", scrub: 0.7 } });
+    if (drawLines) {
+      sky.fromTo(".constellation-lines", { clipPath: "inset(-20% 100% -20% 0%)" }, { clipPath: "inset(-20% 0% -20% 0%)", ease: "none", duration: 1 }, 0)
+        .fromTo(".constellation-end", { scale: 0, opacity: 0 }, { scale: 1, opacity: 0.6, duration: 0.2 }, 0.85);
+    }
+    constellation.querySelectorAll(".benefit").forEach((benefit, index) => {
+      const at = drawLines ? index * 0.25 : index * 0.2;
+      sky.fromTo(benefit.querySelector(".benefit-star"), { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, ease: "back.out(3)", duration: 0.2 }, at)
+        .fromTo(benefit.querySelectorAll("h3, p"), { y: 28, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out", duration: 0.3, stagger: 0.05 }, at + 0.05);
     });
   }
 
@@ -395,7 +557,7 @@ function initMotion() {
   gsap.utils.toArray(".service-row").forEach((row) => {
     gsap.timeline({ scrollTrigger: { trigger: row, start: "top 94%", end: "top 62%", scrub: 0.6 } })
       .fromTo(row, { "--line-progress": 0 }, { "--line-progress": 1, ease: "none" }, 0)
-      .fromTo(row.querySelectorAll(".service-index, :scope > div, .service-tag, .service-arrow"),
+      .fromTo(row.querySelectorAll(":scope > h3, :scope > p, .service-tag"),
         { y: 46, opacity: 0 }, { y: 0, opacity: 1, ease: "power2.out", stagger: 0.08 }, 0);
   });
   gsap.fromTo(".service-footnote", { opacity: 0, x: -20 }, {
@@ -429,32 +591,44 @@ function initMotion() {
     .fromTo(".project-shot img, .project-shot video", { scale: 1.28 }, { scale: 1, ease: "power1.out" }, 0)
     .fromTo(".slide-caption", { y: 40, opacity: 0 }, { y: 0, opacity: 1, ease: "power1.out" }, 0.35);
 
-  /* Process: timeline beam fills and lights up each step */
+  /* Process: the launch trajectory is traced left to right and lights each step it reaches */
   const stepsList = document.querySelector(".steps");
   if (stepsList) {
     stepsList.classList.add("is-tracking");
-    gsap.fromTo(".steps-beam", { scaleY: 0 }, {
-      scaleY: 1, ease: "none",
-      scrollTrigger: { trigger: stepsList, start: "top 62%", end: "bottom 62%", scrub: true }
-    });
-    gsap.utils.toArray(".step").forEach((step) => {
-      ScrollTrigger.create({
-        trigger: step, start: "top+=30 62%",
-        onEnter: () => step.classList.add("is-active"),
-        onLeaveBack: () => step.classList.remove("is-active")
+    const steps = gsap.utils.toArray(".step");
+    const glow = document.querySelector(".trajectory-glow");
+    const horizontal = glow && getComputedStyle(glow).display !== "none";
+    if (horizontal) {
+      // light a step once the traced line passes its x position (0, 25, 50, 75%)
+      gsap.fromTo(glow, { clipPath: "inset(-30% 100% -30% 0%)" }, {
+        clipPath: "inset(-30% 0% -30% 0%)", ease: "none",
+        // the tween's own progress follows the drawn line (scrub lag included), not the raw scroll
+        onUpdate() {
+          const drawn = this.progress();
+          steps.forEach((step, i) => step.classList.toggle("is-active", drawn >= i * 0.25 + 0.01));
+        },
+        scrollTrigger: { trigger: ".trajectory", start: "top 75%", end: "top 20%", scrub: 0.5 }
       });
-    });
+    } else {
+      steps.forEach((step) => {
+        ScrollTrigger.create({
+          trigger: step, start: "top 70%",
+          onEnter: () => step.classList.add("is-active"),
+          onLeaveBack: () => step.classList.remove("is-active")
+        });
+      });
+    }
   }
 
-  /* About: portrait unveils from the bottom with depth */
-  gsap.fromTo(".about-symbol",
-    lite ? { y: 70, opacity: 0 } : { clipPath: "inset(100% 0% 0% 0%)" }, {
-    ...(lite ? { y: 0, opacity: 1 } : { clipPath: "inset(0% 0% 0% 0%)" }), ease: "power2.out",
-    scrollTrigger: { trigger: ".about-symbol", start: "top 88%", end: "top 35%", scrub: 0.7 }
-  });
-  gsap.fromTo(".about-symbol img", { scale: 1.35, yPercent: -6 }, {
-    scale: 1.08, yPercent: 6, ease: "none",
-    scrollTrigger: { trigger: ".about-symbol", start: "top bottom", end: "bottom top", scrub: true }
+  /* About: the portrait unveils from the bottom while its orbit swings into place */
+  gsap.timeline({ scrollTrigger: { trigger: ".about-photo", start: "top 88%", end: "top 35%", scrub: 0.7 } })
+    .fromTo(".about-frame",
+      lite ? { y: 70, opacity: 0 } : { clipPath: "inset(100% 0% 0% 0% round 28px)" },
+      { ...(lite ? { y: 0, opacity: 1 } : { clipPath: "inset(0% 0% 0% 0% round 28px)" }), ease: "power2.out" }, 0)
+    .fromTo(".about-orbit", { opacity: 0, scale: 0.7, rotate: -40 }, { opacity: 1, scale: 1, rotate: -14, ease: "power2.out" }, 0.15);
+  gsap.fromTo(".about-frame img", { scale: 1.18, yPercent: -4 }, {
+    scale: 1.04, yPercent: 3, ease: "none",
+    scrollTrigger: { trigger: ".about-photo", start: "top bottom", end: "bottom top", scrub: true }
   });
 
   /* FAQ: questions slide in, answers open with real height animation */
@@ -493,35 +667,10 @@ function initMotion() {
     });
   });
 
-  /* Contact: panel grows into place, rings turn with the scroll, art follows the cursor */
-  gsap.fromTo(".contact-panel", lite ? { scale: 0.92 } : { scale: 0.9, borderRadius: 40 }, {
-    ...(lite ? { scale: 1 } : { scale: 1, borderRadius: 9 }), ease: "none",
-    scrollTrigger: { trigger: ".contact", start: "top bottom", end: "top 25%", scrub: 0.6 }
-  });
-  gsap.timeline({ scrollTrigger: { trigger: ".contact", start: "top bottom", end: "bottom top", scrub: true } })
-    .fromTo(".contact-orbit", { rotate: -40 }, { rotate: 80, ease: "none" }, 0)
-    .fromTo(".ring-a", { rotate: -95 }, { rotate: 25, ease: "none" }, 0)
-    .fromTo(".ring-b", { rotate: 40 }, { rotate: -70, ease: "none" }, 0);
-  if (lite) gsap.set(".contact-ring", { force3D: true });
-
-  const contactPanel = document.querySelector(".contact-panel");
-  if (finePointer && contactPanel) {
-    gsap.set(".contact-core", { xPercent: -50, yPercent: -50, x: 0, y: 0 });
-    const layers = [
-      [".contact-core", 14], [".contact-ring", 7], [".dot-a", 28], [".dot-b", -22]
-    ].map(([selector, depth]) => ({
-      depth,
-      x: gsap.quickTo(selector, "x", { duration: 0.8, ease: "power3" }),
-      y: gsap.quickTo(selector, "y", { duration: 0.8, ease: "power3" })
-    }));
-    contactPanel.addEventListener("pointermove", (event) => {
-      const box = contactPanel.getBoundingClientRect();
-      const x = (event.clientX - box.left) / box.width - 0.5;
-      const y = (event.clientY - box.top) / box.height - 0.5;
-      layers.forEach((layer) => { layer.x(x * layer.depth * 2); layer.y(y * layer.depth * 2); });
-    });
-    contactPanel.addEventListener("pointerleave", () => layers.forEach((layer) => { layer.x(0); layer.y(0); }));
-  }
+  /* Contact: the logo sets behind the name as you reach the end of the page */
+  gsap.timeline({ scrollTrigger: { trigger: ".sunset", start: "top bottom", endTrigger: document.body, end: "bottom bottom", scrub: 0.6 } })
+    .fromTo(".sunset-sun", { yPercent: -18 }, { yPercent: 0, ease: "none", force3D: true }, 0)
+    .fromTo(".sunset-horizon", { scaleX: 0.3, opacity: 0.3 }, { scaleX: 1, opacity: 1, ease: "power2.out" }, 0);
 
   /* Magnetic buttons */
   if (finePointer) {

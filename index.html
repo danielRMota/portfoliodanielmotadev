@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0a0909">
+  <meta name="theme-color" content="#000000">
   <meta name="description" content="Daniel Mota cria sites e landing pages modernos, claros e adaptados para empresas e profissionais que querem fortalecer sua presença online.">
   <title>Daniel Mota — Desenvolvimento de Sites</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -18,19 +18,21 @@
   <script src="script.js" defer></script>
 </head>
 <body data-whatsapp="558389038017" data-email="danielmotaita@gmail.com">
+  <canvas class="starfield" aria-hidden="true"></canvas>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
   <header class="site-header">
     <div class="container nav-wrap">
       <a class="brand" href="#inicio" aria-label="Daniel Mota, página inicial">
         <img class="brand-icon" src="assets/icone-navbar.webp" width="76" height="42" alt="">
-        <span class="brand-copy"><strong>Daniel Mota</strong><small>DESENVOLVIMENTO DE SITES</small></span>
+        <span class="brand-copy"><strong>Daniel Mota</strong><small>Desenvolvimento de sites</small></span>
       </a>
       <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="main-nav"><span></span><span></span></button>
       <nav class="main-nav" id="main-nav" aria-label="Navegação principal">
         <a href="#beneficios">Benefícios</a>
         <a href="#servicos">Serviços</a>
-        <a href="#portfolio">Conceitos</a>
+        <a href="#portfolio">Projeto</a>
         <a href="#processo">Processo</a>
+        <a href="#sobre">Sobre</a>
         <a class="nav-cta" href="#contato">Fale do seu projeto</a>
       </nav>
     </div>
@@ -38,44 +40,95 @@
   </header>
 
   <main id="conteudo">
-    <section class="hero section" id="inicio">
+    <section class="hero" id="inicio">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <h1 data-split>Seu negócio merece um site que <span class="accent">abre caminhos.</span></h1>
-          <p class="hero-lead">Crio sites e landing pages que apresentam seu trabalho com clareza, passam confiança e facilitam o próximo passo do cliente.</p>
+          <h1 data-split>Seu negócio merece um site que abre caminhos.</h1>
+          <div class="hero-actions">
+            <a class="button button-primary js-whatsapp" href="https://wa.me/558389038017" target="_blank" rel="noopener noreferrer">Conversar no WhatsApp</a>
+            <a class="text-link" href="#portfolio">Ver um projeto entregue</a>
+          </div>
         </div>
-        <div class="hero-art" aria-label="Logo Daniel Mota com símbolo de buraco negro e código">
-          <figure class="logo-frame"><video class="logo-video" src="assets/logo-animada.mp4" poster="assets/logo-animada-poster.webp" autoplay muted loop playsinline preload="auto" role="img" aria-label="Logo Daniel Mota — Desenvolvimento de Sites, com um buraco negro e o símbolo de código menor e maior que"></video></figure>
+        <div class="hero-art">
+          <div class="blackhole" role="img" aria-label="Logo Daniel Mota: um buraco negro com anel de luz e o símbolo de código menor e maior que, flutuando no espaço">
+            <div class="bh-float-x"><div class="bh-float-y">
+              <span class="bh-glow" aria-hidden="true"></span>
+              <svg class="bh-svg" viewBox="-330 -210 660 420" aria-hidden="true" focusable="false">
+                <defs>
+                  <linearGradient id="bh-ring-grad" x1="-244" y1="0" x2="244" y2="0" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ffb347"/>
+                    <stop offset=".45" stop-color="#ff8a2a"/>
+                    <stop offset="1" stop-color="#e2412f"/>
+                  </linearGradient>
+                  <linearGradient id="bh-chev-l" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#ffd24a"/>
+                    <stop offset="1" stop-color="#ffaa3a"/>
+                  </linearGradient>
+                  <linearGradient id="bh-chev-r" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#ff9f30"/>
+                    <stop offset="1" stop-color="#ff7a24"/>
+                  </linearGradient>
+                  <radialGradient id="bh-core-grad" cx="0" cy="0" r="110" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#000"/>
+                    <stop offset=".8" stop-color="#020104"/>
+                    <stop offset="1" stop-color="#1c0e07"/>
+                  </radialGradient>
+                </defs>
+                <g transform="rotate(-14)" fill="none">
+                  <ellipse rx="204" ry="50" stroke="#8a3214" stroke-width="18" opacity=".3"/>
+                  <ellipse class="bh-ring" rx="232" ry="72" stroke="url(#bh-ring-grad)" stroke-width="24"/>
+                  <path class="bh-ticks" d="M153.6 -60.5A239 79 0 0 1 238.1 6.9"/>
+                  <g class="bh-comet">
+                    <ellipse class="bh-spark bh-o14" rx="232" ry="72" pathLength="100" stroke-dasharray="14 86" stroke-width="4" opacity=".4"/>
+                    <ellipse class="bh-spark bh-o6" rx="232" ry="72" pathLength="100" stroke-dasharray="6 94" stroke-width="7" opacity=".7"/>
+                    <ellipse class="bh-spark bh-o0 bh-head" rx="232" ry="72" pathLength="100" stroke-dasharray=".01 99.99" stroke-width="10"/>
+                  </g>
+                  <g class="bh-comet bh-comet-b">
+                    <ellipse class="bh-spark bh-o10" rx="232" ry="72" pathLength="100" stroke-dasharray="10 90" stroke-width="3" opacity=".45"/>
+                    <ellipse class="bh-spark bh-o0" rx="232" ry="72" pathLength="100" stroke-dasharray=".01 99.99" stroke-width="7" opacity=".9"/>
+                  </g>
+                </g>
+                <circle class="bh-core" r="110" fill="url(#bh-core-grad)" stroke="#ff8f2c" stroke-width="2.5"/>
+                <circle r="102" fill="none" stroke="#ff9128" stroke-width="1" opacity=".14"/>
+                <path class="bh-chev bh-chev-l" d="M-26 -39L-60 0L-26 39" stroke="url(#bh-chev-l)"/>
+                <path class="bh-chev bh-chev-r" d="M26 -39L60 0L26 39" stroke="url(#bh-chev-r)"/>
+              </svg>
+            </div></div>
+          </div>
         </div>
       </div>
     </section>
 
     <div class="velocity" aria-hidden="true">
       <div class="velocity-row" data-velocity="1"><div class="velocity-track"><span>Landing pages</span><i>&lt;/&gt;</i><span>Sites institucionais</span><i>&lt;/&gt;</i><span>Redesign</span><i>&lt;/&gt;</i></div></div>
-      <div class="velocity-row velocity-row-outline" data-velocity="-1"><div class="velocity-track"><span>Credibilidade</span><i>&lt;/&gt;</i><span>Clareza</span><i>&lt;/&gt;</i><span>Feito para o celular</span><i>&lt;/&gt;</i></div></div>
+      <div class="velocity-row velocity-row-quiet" data-velocity="-1"><div class="velocity-track"><span>Credibilidade</span><i>✦</i><span>Clareza</span><i>✦</i><span>Feito para o celular</span><i>✦</i></div></div>
     </div>
 
-    <section class="benefits section section-light" id="beneficios">
+    <section class="benefits section" id="beneficios">
       <div class="container">
         <div class="section-heading">
           <h2>Um site bem pensado trabalha a favor do seu negócio.</h2>
           <p>Uma presença digital organizada ajuda as pessoas a entenderem o que você faz, por que escolher você e como entrar em contato.</p>
         </div>
-        <div class="benefit-grid">
-          <article class="benefit-card">
-            <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M7 15l4-4 3 2 5-6"/><path d="M16 7h3v3"/></svg></div>
+        <div class="constellation">
+          <svg class="constellation-lines" viewBox="0 0 100 130" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <polyline points="0,30 25,88 50,14 75,70 99,35"/>
+          </svg>
+          <span class="constellation-end" aria-hidden="true"></span>
+          <article class="benefit" style="--y:30px">
+            <span class="benefit-star" aria-hidden="true"></span>
             <h3>Mais credibilidade</h3><p>Apresente sua empresa com uma imagem profissional e coerente com a qualidade do seu trabalho.</p>
           </article>
-          <article class="benefit-card">
-            <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="15" r="3"/><path d="m20.3 17.3 1.2 1.2"/></svg></div>
+          <article class="benefit" style="--y:88px">
+            <span class="benefit-star" aria-hidden="true"></span>
             <h3>Informação clara</h3><p>Organize serviços, diferenciais e informações importantes em uma página fácil de entender.</p>
           </article>
-          <article class="benefit-card">
-            <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 17h4"/></svg></div>
+          <article class="benefit" style="--y:14px">
+            <span class="benefit-star" aria-hidden="true"></span>
             <h3>Boa experiência no celular</h3><p>Seu conteúdo se adapta a diferentes telas para que o visitante navegue com conforto.</p>
           </article>
-          <article class="benefit-card">
-            <div class="icon-box"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></div>
+          <article class="benefit" style="--y:70px">
+            <span class="benefit-star" aria-hidden="true"></span>
             <h3>Próximo passo evidente</h3><p>Chamadas para ação ajudam a direcionar o visitante para orçamento, agendamento ou contato.</p>
           </article>
         </div>
@@ -85,15 +138,15 @@
     <section class="services section" id="servicos">
       <div class="container">
         <div class="section-heading section-heading-row">
-          <div><h2>Um formato certo para cada objetivo.</h2></div>
+          <h2>Um formato certo para cada objetivo.</h2>
           <p>O projeto começa pela necessidade do seu negócio. A partir dela, definimos a estrutura, o conteúdo e o caminho mais adequado.</p>
         </div>
         <div class="service-list">
-          <article class="service-row"><span class="service-index">01</span><div><h3>Landing page</h3><p>Uma página direta para apresentar uma oferta, serviço ou campanha e conduzir o visitante a uma ação.</p></div><span class="service-tag">FOCO EM AÇÃO</span><span class="service-arrow" aria-hidden="true">→</span></article>
-          <article class="service-row"><span class="service-index">02</span><div><h3>Site institucional</h3><p>Uma presença online para explicar quem você é, o que oferece e como as pessoas podem encontrar sua empresa.</p></div><span class="service-tag">SUA MARCA ONLINE</span><span class="service-arrow" aria-hidden="true">→</span></article>
-          <article class="service-row"><span class="service-index">03</span><div><h3>Redesign de site</h3><p>Uma nova organização visual e de conteúdo para deixar uma página existente mais atual, clara e simples de navegar.</p></div><span class="service-tag">NOVA EXPERIÊNCIA</span><span class="service-arrow" aria-hidden="true">→</span></article>
+          <article class="service-row"><h3>Landing page</h3><p>Uma página direta para apresentar uma oferta, serviço ou campanha e conduzir o visitante a uma ação.</p><span class="service-tag">Foco em ação</span></article>
+          <article class="service-row"><h3>Site institucional</h3><p>Uma presença online para explicar quem você é, o que oferece e como as pessoas podem encontrar sua empresa.</p><span class="service-tag">Sua marca online</span></article>
+          <article class="service-row"><h3>Redesign de site</h3><p>Uma nova organização visual e de conteúdo para deixar uma página existente mais atual, clara e simples de navegar.</p><span class="service-tag">Nova experiência</span></article>
         </div>
-        <div class="service-footnote">Cada projeto é pensado para o contexto, o público e a identidade do negócio.</div>
+        <p class="service-footnote">Cada projeto é pensado para o contexto, o público e a identidade do negócio.</p>
 
         <div class="plans" id="formatos">
           <div class="plans-head">
@@ -101,8 +154,8 @@
             <p>Você pode comprar o site ou usar por assinatura. Nos dois formatos o site é publicado por mim, o domínio fica no seu nome e tudo funciona bem no celular. O que muda é a forma de pagamento e de quem é o código.</p>
           </div>
           <div class="plan-grid">
-            <article class="plan-card">
-              <div class="plan-top"><span class="plan-tag">SITE PRÓPRIO</span><span class="plan-badge">O site é seu</span></div>
+            <article class="plan-card plan-own">
+              <div class="plan-top"><span class="plan-tag">Site próprio</span><span class="plan-badge">O site é seu</span></div>
               <h4>Compre uma vez, tenha para sempre.</h4>
               <p class="plan-desc">Você paga pelo desenvolvimento e recebe o site completo. Código, textos e imagens passam a ser seus.</p>
               <ul class="plan-list">
@@ -118,8 +171,8 @@
               </dl>
               <a class="button button-ghost plan-cta" href="https://wa.me/558389038017?text=Ol%C3%A1%2C%20Daniel%21%20Vi%20seu%20portf%C3%B3lio%20e%20tenho%20interesse%20em%20um%20site%20pr%C3%B3prio%20%28comprado%29%20para%20o%20meu%20neg%C3%B3cio." target="_blank" rel="noopener noreferrer">Quero um site próprio</a>
             </article>
-            <article class="plan-card">
-              <div class="plan-top"><span class="plan-tag">SITE POR ASSINATURA</span><span class="plan-badge">Sem investimento alto no início</span></div>
+            <article class="plan-card plan-sub">
+              <div class="plan-top"><span class="plan-tag">Site por assinatura</span><span class="plan-badge">Sem investimento alto no início</span></div>
               <h4>Comece agora, pague por mês.</h4>
               <p class="plan-desc">Em vez de pagar o desenvolvimento de uma vez, você paga uma mensalidade que já inclui o site, a hospedagem e a manutenção.</p>
               <ul class="plan-list">
@@ -141,11 +194,11 @@
       </div>
     </section>
 
-    <section class="portfolio section section-light" id="portfolio">
+    <section class="portfolio section" id="portfolio">
       <div class="container">
         <div class="project-intro">
           <div>
-            <h2>Exemplos de Sites feitos</h2>
+            <h2>Exemplos de sites feitos</h2>
             <p>Projeto em destaque: MotaLab Clínica — site para apresentar a clínica, seus serviços e o Cartão MotaLab.</p>
           </div>
           <a class="project-live-link" href="https://motalabclinica.com.br" target="_blank" rel="noopener noreferrer">Visitar o site</a>
@@ -159,7 +212,7 @@
                   <button class="video-toggle" type="button" data-video-toggle aria-label="Reproduzir vídeo"><span class="video-toggle-icon" aria-hidden="true"></span></button>
                   <span class="video-progress" aria-hidden="true"><span data-video-progress></span></span>
                 </div>
-                <div class="slide-caption"><div><span class="slide-category">NAVEGAÇÃO REAL</span><h3>O site em uso, do começo ao cadastro.</h3></div><p>Gravação navegando pelo site: combos de exames, equipe, Cartão MotaLab e cadastro.</p></div>
+                <div class="slide-caption"><div><span class="slide-category">Navegação real</span><h3>O site em uso, do começo ao cadastro.</h3></div><p>Gravação navegando pelo site: combos de exames, equipe, Cartão MotaLab e cadastro.</p></div>
               </article>
             </div>
           </div>
@@ -168,21 +221,35 @@
     </section>
 
     <section class="process section" id="processo">
-      <div class="container process-grid">
-        <div class="section-heading"><h2>Um processo simples, com você por perto.</h2><p>Você acompanha as decisões e sabe o que vem em cada etapa do desenvolvimento.</p><a class="text-link process-link" href="#contato">Conte sua ideia</a></div>
-        <div class="steps"><span class="steps-track" aria-hidden="true"><span class="steps-beam"></span></span>
-          <article class="step"><span>01</span><div><h3>Entendimento</h3><p>Conversamos sobre seu negócio, seu público e o que o site precisa alcançar.</p></div></article>
-          <article class="step"><span>02</span><div><h3>Estrutura e conteúdo</h3><p>Organizamos as informações para que a mensagem seja clara e a navegação faça sentido.</p></div></article>
-          <article class="step"><span>03</span><div><h3>Design e desenvolvimento</h3><p>Transformo a estrutura em uma experiência visual responsiva, alinhada à sua marca.</p></div></article>
-          <article class="step"><span>04</span><div><h3>Revisão e entrega</h3><p>Revisamos o resultado juntos e alinhamos os próximos passos para publicar seu site.</p></div></article>
+      <div class="container">
+        <div class="section-heading section-heading-row">
+          <h2>Um processo simples, com você por perto.</h2>
+          <p>Você acompanha as decisões e sabe o que vem em cada etapa do desenvolvimento. <a class="text-link" href="#contato">Conte sua ideia</a></p>
+        </div>
+        <div class="trajectory">
+          <svg class="trajectory-path" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path class="trajectory-trail" d="M0 145.0 L25 144.8 L50 144.4 L75 143.8 L100 142.9 L125 141.9 L150 140.7 L175 139.4 L200 137.8 L225 136.1 L250 134.3 L275 132.3 L300 130.1 L325 127.8 L350 125.4 L375 122.8 L400 120.0 L425 117.1 L450 114.1 L475 111.0 L500 107.7 L525 104.2 L550 100.7 L575 97.0 L600 93.2 L625 89.2 L650 85.1 L675 80.9 L700 76.6 L725 72.1 L750 67.5 L775 62.8 L800 58.0 L825 53.0 L850 48.0 L875 42.8 L900 37.5 L925 32.0 L950 26.5 L975 20.8 L1000 15.0"/>
+          </svg>
+          <svg class="trajectory-path trajectory-glow" viewBox="0 0 1000 160" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path class="trajectory-line" d="M0 145.0 L25 144.8 L50 144.4 L75 143.8 L100 142.9 L125 141.9 L150 140.7 L175 139.4 L200 137.8 L225 136.1 L250 134.3 L275 132.3 L300 130.1 L325 127.8 L350 125.4 L375 122.8 L400 120.0 L425 117.1 L450 114.1 L475 111.0 L500 107.7 L525 104.2 L550 100.7 L575 97.0 L600 93.2 L625 89.2 L650 85.1 L675 80.9 L700 76.6 L725 72.1 L750 67.5 L775 62.8 L800 58.0 L825 53.0 L850 48.0 L875 42.8 L900 37.5 L925 32.0 L950 26.5 L975 20.8 L1000 15.0"/>
+          </svg>
+          <ol class="steps">
+          <li class="step" style="--y:145px"><span class="step-number">1</span><h3>Entendimento</h3><p>Conversamos sobre seu negócio, seu público e o que o site precisa alcançar.</p></li>
+          <li class="step" style="--y:134px"><span class="step-number">2</span><h3>Estrutura e conteúdo</h3><p>Organizamos as informações para que a mensagem seja clara e a navegação faça sentido.</p></li>
+          <li class="step" style="--y:108px"><span class="step-number">3</span><h3>Design e desenvolvimento</h3><p>Transformo a estrutura em uma experiência visual responsiva, alinhada à sua marca.</p></li>
+          <li class="step" style="--y:67px"><span class="step-number">4</span><h3>Revisão e entrega</h3><p>Revisamos o resultado juntos e alinhamos os próximos passos para publicar seu site.</p></li>
+          </ol>
         </div>
       </div>
     </section>
 
-    <section class="about section section-light" id="sobre">
+    <section class="about section" id="sobre">
       <div class="container about-grid">
-        <div class="about-symbol"><img src="assets/logo.webp" width="722" height="709" loading="lazy" decoding="async" alt="Logo de Daniel Mota: um buraco negro com o símbolo de código e o texto Desenvolvimento de Sites"></div>
-        <div class="about-copy"><h2>Oi, eu sou o Daniel.</h2><p>Ajudo empresas e profissionais a apresentarem seu trabalho na internet com sites organizados, modernos e fáceis de navegar.</p><p>Acredito que um bom site une uma mensagem clara, um visual cuidadoso e uma experiência que respeita o tempo de quem visita.</p><a href="#contato" class="button button-dark">Vamos tirar sua ideia do papel</a></div>
+        <figure class="about-photo">
+          <span class="about-orbit" aria-hidden="true"></span>
+          <div class="about-frame"><img src="assets/daniel-mota.webp" width="1200" height="1500" loading="lazy" decoding="async" alt="Daniel Mota, de óculos e camiseta verde, sentado à mesa de trabalho"></div>
+        </figure>
+        <div class="about-copy"><h2>Oi, eu sou o Daniel.</h2><p>Ajudo empresas e profissionais a apresentarem seu trabalho na internet com sites organizados, modernos e fáceis de navegar.</p><p>Acredito que um bom site une uma mensagem clara, um visual cuidadoso e uma experiência que respeita o tempo de quem visita.</p><a href="#contato" class="button button-ghost">Vamos tirar sua ideia do papel</a></div>
       </div>
     </section>
 
@@ -190,46 +257,90 @@
       <div class="container faq-grid">
         <div class="section-heading"><h2>Antes de começar.</h2><p>Um projeto bem alinhado começa com expectativas claras.</p></div>
         <div class="faq-list">
-          <details><summary>O que preciso para começar um site?<span>+</span></summary><p>Uma conversa sobre seu negócio e seus objetivos já é um ótimo começo. Depois alinhamos conteúdo, referências, identidade visual e materiais disponíveis.</p></details>
-          <details><summary>O site funciona em celular e computador?<span>+</span></summary><p>Sim. A experiência é planejada para se adaptar a diferentes tamanhos de tela e facilitar a navegação em cada dispositivo.</p></details>
-          <details><summary>Posso pedir alterações durante o projeto?<span>+</span></summary><p>Sim. As etapas incluem momentos de revisão para que possamos avaliar o trabalho e alinhar ajustes em conjunto.</p></details>
-          <details><summary>Quanto custa e quanto tempo leva?<span>+</span></summary><p>O prazo e o investimento dependem do escopo, do conteúdo e das funcionalidades. Após entender sua necessidade, preparo uma proposta específica.</p></details>
+          <details><summary>O que preciso para começar um site?<span aria-hidden="true"></span></summary><p>Uma conversa sobre seu negócio e seus objetivos já é um ótimo começo. Depois alinhamos conteúdo, referências, identidade visual e materiais disponíveis.</p></details>
+          <details><summary>O site funciona em celular e computador?<span aria-hidden="true"></span></summary><p>Sim. A experiência é planejada para se adaptar a diferentes tamanhos de tela e facilitar a navegação em cada dispositivo.</p></details>
+          <details><summary>Posso pedir alterações durante o projeto?<span aria-hidden="true"></span></summary><p>Sim. As etapas incluem momentos de revisão para que possamos avaliar o trabalho e alinhar ajustes em conjunto.</p></details>
+          <details><summary>Quanto custa e quanto tempo leva?<span aria-hidden="true"></span></summary><p>O prazo e o investimento dependem do escopo, do conteúdo e das funcionalidades. Após entender sua necessidade, preparo uma proposta específica.</p></details>
         </div>
       </div>
     </section>
 
-    <section class="contact section" id="contato">
-      <div class="container contact-panel">
-        <div class="contact-orbit"></div>
-        <div class="contact-content"><h2>Vamos criar um site que represente bem o seu negócio?</h2><p>Conte um pouco sobre sua ideia. A gente conversa sobre os objetivos e encontra um bom caminho para o projeto.</p><div class="contact-actions"><a class="button button-primary" id="contact-cta" href="https://wa.me/558389038017" target="_blank" rel="noopener noreferrer">Falar pelo WhatsApp</a><a class="contact-email" href="mailto:danielmotaita@gmail.com">ou envie um e-mail</a></div><small class="contact-hint">WhatsApp: (83) 8903-8017 · danielmotaita@gmail.com</small></div>
-        <div class="contact-art" aria-hidden="true"><span class="contact-ring ring-a"></span><span class="contact-ring ring-b"></span><span class="contact-core">&lt;<i></i>&gt;</span><span class="contact-dot dot-a"></span><span class="contact-dot dot-b"></span></div>
+    <section class="contact" id="contato">
+      <div class="container contact-content">
+        <h2>Vamos criar um site que represente bem o seu negócio?</h2>
+        <p>Conte um pouco sobre sua ideia. A gente conversa sobre os objetivos e encontra um bom caminho para o projeto.</p>
+        <div class="contact-actions"><a class="button button-primary js-whatsapp" id="contact-cta" href="https://wa.me/558389038017" target="_blank" rel="noopener noreferrer">Falar pelo WhatsApp</a><a class="contact-email" href="mailto:danielmotaita@gmail.com">ou envie um e-mail</a></div>
+        <small class="contact-hint">WhatsApp (83) 8903-8017 e danielmotaita@gmail.com</small>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">
-      <div class="footer-panel">
-        <div class="footer-about">
-          <a class="brand footer-brand" href="#inicio" aria-label="Daniel Mota, voltar ao início"><img class="brand-icon" src="assets/icone-navbar.webp" width="76" height="42" alt=""><span class="brand-copy"><strong>Daniel Mota</strong><small>DESENVOLVIMENTO DE SITES</small></span></a>
-          <p>Sites e landing pages feitos para apresentar seu negócio com clareza e profissionalismo.</p>
-        </div>
-        <div class="footer-column">
-          <h2>Explore</h2>
-          <a href="#beneficios">Benefícios</a>
-          <a href="#servicos">Serviços</a>
-          <a href="#portfolio">Conceitos</a>
-          <a href="#processo">Processo</a>
-        </div>
-        <div class="footer-column footer-contact-column">
-          <h2>Vamos conversar</h2>
-          <a href="https://wa.me/558389038017" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a href="mailto:danielmotaita@gmail.com">danielmotaita@gmail.com</a>
-          <a class="back-top" href="#inicio">Voltar ao início ↑</a>
+    <div class="sunset">
+      <div class="sunset-sky" aria-hidden="true">
+        <div class="sunset-sun">
+          <span class="sun-corona"></span>
+          <span class="sun-ripple"></span>
+          <span class="sun-ripple"></span>
+          <span class="sun-ripple"></span>
+          <svg class="sun-svg" viewBox="-130 -130 260 260" focusable="false">
+            <defs>
+              <radialGradient id="sun-core" cx="-30" cy="-40" r="150" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#1a0f0a"/>
+                <stop offset=".55" stop-color="#030202"/>
+                <stop offset=".92" stop-color="#000"/>
+                <stop offset="1" stop-color="#2a1208"/>
+              </radialGradient>
+              <linearGradient id="sun-rim" x1="-112" y1="-112" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff3cf"/>
+                <stop offset=".35" stop-color="#ffd24a"/>
+                <stop offset="1" stop-color="#ff7a24"/>
+              </linearGradient>
+              <linearGradient id="sun-chev-l" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd24a"/><stop offset="1" stop-color="#ffaa3a"/></linearGradient>
+              <linearGradient id="sun-chev-r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9f30"/><stop offset="1" stop-color="#ff7a24"/></linearGradient>
+            </defs>
+            <circle r="112" fill="url(#sun-core)" stroke="#ff8f2c" stroke-width="2.5"/>
+            <circle r="104" fill="none" stroke="#ff9128" stroke-width="1" opacity=".18"/>
+            <g class="sun-rim">
+              <circle r="112" fill="none" stroke="url(#sun-rim)" stroke-width="5" stroke-linecap="round" pathLength="100" stroke-dasharray="24 76"/>
+              <circle r="112" fill="none" stroke="#ffd24a" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="7 93" stroke-dashoffset="-50" opacity=".75"/>
+            </g>
+            <path class="bh-chev bh-chev-l" d="M-26 -39L-60 0L-26 39" stroke="url(#sun-chev-l)"/>
+            <path class="bh-chev bh-chev-r" d="M26 -39L60 0L26 39" stroke="url(#sun-chev-r)"/>
+          </svg>
         </div>
       </div>
-      <div class="footer-bottom"><span>© <span id="year"></span> Daniel Mota. Todos os direitos reservados.</span></div>
+      <span class="sunset-horizon" aria-hidden="true"></span>
+      <p class="sunset-name">Daniel Mota</p>
     </div>
+    <div class="container footer-panel">
+      <div class="footer-about">
+        <p>Sites e landing pages feitos para apresentar seu negócio com clareza e profissionalismo.</p>
+        <ul class="social">
+          <li><a class="social-link" href="https://www.instagram.com/danielmota.dev/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Daniel Mota (@danielmotadev)">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.15" fill="currentColor"/></svg>
+          </a></li>
+          <li><a class="social-link" href="https://github.com/danielRMota" target="_blank" rel="noopener noreferrer" aria-label="GitHub de Daniel Mota (danielRMota)">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a></li>
+        </ul>
+      </div>
+      <nav class="footer-column" aria-label="Seções">
+        <h2>Explore</h2>
+        <a href="#beneficios">Benefícios</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#portfolio">Projeto</a>
+        <a href="#processo">Processo</a>
+        <a href="#sobre">Sobre</a>
+      </nav>
+      <div class="footer-column">
+        <h2>Vamos conversar</h2>
+        <a href="https://wa.me/558389038017" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="mailto:danielmotaita@gmail.com">danielmotaita@gmail.com</a>
+        <a class="back-top" href="#inicio">Voltar ao início</a>
+      </div>
+    </div>
+    <div class="container footer-bottom"><span>© <span id="year"></span> Daniel Mota. Todos os direitos reservados.</span></div>
   </footer>
 </body>
 </html>
