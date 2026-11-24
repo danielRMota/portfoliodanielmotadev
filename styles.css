@@ -189,7 +189,16 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; margin: 0; }
 .slide-caption { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 26px 30px 28px; border-top: 1px solid var(--line); }
 .slide-category { color: var(--ember); font-family: var(--display); font-weight: 700; font-size: 14px; }
 .slide-caption h3 { margin-top: 4px; font-size: 22px; line-height: 1.2; letter-spacing: -.03em; }
-.slide-caption > p { max-width: 40ch; margin: 0; color: var(--dust); font-size: 15px; line-height: 1.65; }
+.slide-caption p { max-width: 60ch; margin: 8px 0 0; color: var(--dust); font-size: 15px; line-height: 1.65; }
+/* project switcher, drawn like browser tabs on top of the recording */
+.carousel-tabs { display: flex; gap: 6px; padding: 12px 14px 0; border-bottom: 1px solid var(--line); background: rgba(255, 255, 255, .02); overflow-x: auto; scrollbar-width: none; }
+.carousel-tabs::-webkit-scrollbar { display: none; }
+.carousel-tab { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 11px 18px 12px; border: 1px solid transparent; border-bottom: 0; border-radius: 12px 12px 0 0; background: transparent; color: var(--dust); font: 600 14px/1 var(--font); white-space: nowrap; cursor: pointer; transition: color .25s ease, background .25s ease, border-color .25s ease; }
+.carousel-tab::before { content: ""; width: 8px; height: 8px; border: 1.5px solid currentColor; border-radius: 50%; opacity: .7; transition: background .25s ease, border-color .25s ease, box-shadow .25s ease; }
+.carousel-tab:hover { color: var(--starlight); }
+.carousel-tab.is-active { color: var(--starlight); background: rgba(255, 255, 255, .06); border-color: var(--line); }
+.carousel-tab.is-active::before { border-color: var(--ember); background: var(--ember); box-shadow: 0 0 10px rgba(255, 145, 40, .8); opacity: 1; }
+.carousel-tab.is-active::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--accretion); }
 
 /* ---------- Process: a launch trajectory ---------- */
 .trajectory { position: relative; }
@@ -377,7 +386,9 @@ html.lenis { scroll-behavior: auto; }
   .project-shot { aspect-ratio: 1.55; }
   .project-shot img, .project-video { object-fit: contain; }
   .video-toggle { right: 10px; bottom: 12px; width: 40px; height: 40px; }
-  .slide-caption { align-items: flex-start; flex-direction: column; gap: 10px; padding: 20px 18px 22px; }
+  .slide-caption { align-items: flex-start; flex-direction: column; gap: 18px; padding: 20px 18px 22px; }
+  .carousel-tabs { gap: 4px; padding: 10px 10px 0; }
+  .carousel-tab { gap: 8px; padding: 10px 12px 11px; font-size: 13px; }
   .slide-caption h3 { font-size: 19px; }
   .about-grid, .faq-grid { grid-template-columns: 1fr; gap: 40px; }
   .about-photo { width: min(100% - 40px, 360px); margin-inline: auto; }

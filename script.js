@@ -173,41 +173,76 @@ if (email && emailLink) emailLink.href = `mailto:${email}`;
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
 })();
 
-/* ---------- Carousel ---------- */
+/* ---------- Carousel: one recorded project per slide ---------- */
 const carousel = document.querySelector("[data-carousel]");
 if (carousel) {
   const track = carousel.querySelector("[data-carousel-track]");
   const slides = [...carousel.querySelectorAll("[data-slide]")];
-  const dots = [...carousel.querySelectorAll("[data-carousel-dot]")];
-  const previous = carousel.querySelector("[data-carousel-prev]");
-  const next = carousel.querySelector("[data-carousel-next]");
+  const tabs = [...carousel.querySelectorAll("[data-carousel-dot]")];
   const viewport = carousel.querySelector(".carousel-viewport");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const video = carousel.querySelector("[data-demo-video]");
-  const videoSlide = video ? slides.indexOf(video.closest("[data-slide]")) : -1;
-  const videoToggle = carousel.querySelector("[data-video-toggle]");
-  const videoProgress = carousel.querySelector("[data-video-progress]");
+  const small = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
   let activeIndex = 0;
-  let timer;
   let touchStartX = null;
   let carouselInView = false;
-  let videoPausedByUser = false;
+  let carouselNear = false;
 
-  /* Demo video: plays only while its slide is showing and the carousel is on screen */
-  const syncVideo = () => {
-    if (!video) return;
-    const shouldPlay = activeIndex === videoSlide && carouselInView && !videoPausedByUser && !reducedMotion.matches && !document.hidden;
-    if (shouldPlay && video.paused) video.play().catch(() => {});
-    if (!shouldPlay && !video.paused) video.pause();
-  };
-  const paintProgress = () => {
-    if (!video || !videoProgress) return;
-    const ratio = video.duration ? video.currentTime / video.duration : 0;
-    videoProgress.style.transform = `scaleX(${ratio})`;
-    if (!video.paused) requestAnimationFrame(paintProgress);
+  // every slide carries its own recording, play/pause button and progress bar
+  const players = slides.map((slide) => {
+    const video = slide.querySelector("[data-demo-video]");
+    if (!video) return null;
+    const player = { slide, video, toggle: slide.querySelector("[data-video-toggle]"), bar: slide.querySelector("[data-video-progress]"), pausedByUser: false };
+    const paint = () => {
+      if (player.bar) player.bar.style.transform = `scaleX(${video.duration ? video.currentTime / video.duration : 0})`;
+      if (!video.paused) requestAnimationFrame(paint);
+    };
+    video.addEventListener("play", () => {
+      slide.classList.add("is-video-playing");
+      player.toggle?.setAttribute("aria-label", "Pausar vídeo");
+      requestAnimationFrame(paint);
+    });
+    video.addEventListener("pause", () => {
+      slide.classList.remove("is-video-playing");
+      player.toggle?.setAttribute("aria-label", "Reproduzir vídeo");
+      paint();
+    });
+    // when a recording finishes, move on to the next project (the last one loops back to the first)
+    video.addEventListener("ended", () => {
+      if (slides.length > 1) showSlide(activeIndex + 1);
+      else { video.currentTime = 0; sync(); }
+    });
+    player.toggle?.addEventListener("click", () => {
+      if (video.paused) {
+        player.pausedByUser = false;
+        if (video.ended) video.currentTime = 0;
+        load(player);
+        video.play().catch(() => {});
+      } else {
+        player.pausedByUser = true;
+        video.pause();
+      }
+    });
+    return player;
+  });
+
+  // a recording is only downloaded once its slide is (about to be) shown
+  const load = (player) => {
+    if (!player || player.video.getAttribute("src")) return;
+    player.video.src = (small && player.video.dataset.srcMobile) || player.video.dataset.src;
+    player.video.preload = "auto";
   };
 
-  const showSlide = (index) => {
+  // only the visible slide's recording plays, and only while the carousel is on screen
+  const sync = () => {
+    players.forEach((player, i) => {
+      if (!player) return;
+      const shouldPlay = i === activeIndex && carouselInView && !player.pausedByUser && !reducedMotion.matches && !document.hidden;
+      if (shouldPlay) { load(player); if (player.video.paused) player.video.play().catch(() => {}); }
+      else if (!player.video.paused) player.video.pause();
+    });
+  };
+
+  function showSlide(index) {
     const previousIndex = activeIndex;
     activeIndex = (index + slides.length) % slides.length;
     track.style.transform = `translateX(-${activeIndex * 100}%)`;
@@ -215,94 +250,45 @@ if (carousel) {
       slide.setAttribute("aria-hidden", String(i !== activeIndex));
       slide.inert = i !== activeIndex;
     });
-    dots.forEach((dot, i) => {
+    tabs.forEach((tab, i) => {
       const active = i === activeIndex;
-      dot.classList.toggle("is-active", active);
-      dot.setAttribute("aria-current", String(active));
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-pressed", String(active));
     });
-    if (video && activeIndex === videoSlide && previousIndex !== videoSlide) {
-      video.currentTime = 0;
-      videoPausedByUser = false;
+    const player = players[activeIndex];
+    if (player && previousIndex !== activeIndex) {
+      player.video.currentTime = 0;
+      player.pausedByUser = false;
     }
-    syncVideo();
-  };
-
-  const stopAutoplay = () => window.clearInterval(timer);
-  const startAutoplay = () => {
-    stopAutoplay();
-    // the video slide advances by itself when the recording ends
-    if (activeIndex === videoSlide) return;
-    if (!reducedMotion.matches && !document.hidden) timer = window.setInterval(() => showSlide(activeIndex + 1), 7000);
-  };
-
-  if (video) {
-    video.addEventListener("play", () => {
-      carousel.classList.add("is-video-playing");
-      videoToggle?.setAttribute("aria-label", "Pausar vídeo");
-      requestAnimationFrame(paintProgress);
-    });
-    video.addEventListener("pause", () => {
-      carousel.classList.remove("is-video-playing");
-      videoToggle?.setAttribute("aria-label", "Reproduzir vídeo");
-      paintProgress();
-    });
-    video.addEventListener("ended", () => { showSlide(activeIndex + 1); startAutoplay(); });
-    videoToggle?.addEventListener("click", () => {
-      if (video.paused) {
-        videoPausedByUser = false;
-        if (video.ended) video.currentTime = 0;
-        video.play().catch(() => {});
-      } else {
-        videoPausedByUser = true;
-        video.pause();
-      }
-    });
-    const loadVideo = () => {
-      if (video.getAttribute("src")) return;
-      const small = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
-      video.src = (small && video.dataset.srcMobile) || video.dataset.src;
-      video.preload = "auto";
-    };
-    if ("IntersectionObserver" in window) {
-      const nearObserver = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting) { loadVideo(); nearObserver.disconnect(); }
-      }, { rootMargin: "600px 0px" });
-      nearObserver.observe(carousel);
-      new IntersectionObserver(([entry]) => {
-        carouselInView = entry.isIntersecting;
-        if (carouselInView) loadVideo();
-        syncVideo();
-      }, { threshold: 0.35 }).observe(carousel);
-    } else {
-      loadVideo();
-      carouselInView = true;
-    }
+    if (carouselNear) load(player);
+    sync();
   }
 
-  previous?.addEventListener("click", () => { showSlide(activeIndex - 1); startAutoplay(); });
-  next?.addEventListener("click", () => { showSlide(activeIndex + 1); startAutoplay(); });
-  dots.forEach((dot, i) => dot.addEventListener("click", () => { showSlide(i); startAutoplay(); }));
-  carousel.addEventListener("mouseenter", stopAutoplay);
-  carousel.addEventListener("mouseleave", startAutoplay);
-  carousel.addEventListener("focusin", stopAutoplay);
-  carousel.addEventListener("focusout", (event) => {
-    if (!carousel.contains(event.relatedTarget)) startAutoplay();
-  });
-  document.addEventListener("visibilitychange", () => { startAutoplay(); syncVideo(); });
-  reducedMotion.addEventListener?.("change", startAutoplay);
+  tabs.forEach((tab, i) => tab.addEventListener("click", () => showSlide(i)));
+  document.addEventListener("visibilitychange", sync);
   viewport?.addEventListener("touchstart", (event) => { touchStartX = event.changedTouches[0].clientX; }, { passive: true });
   viewport?.addEventListener("touchend", (event) => {
     if (touchStartX === null) return;
     const distance = event.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(distance) > 45) {
-      showSlide(activeIndex + (distance < 0 ? 1 : -1));
-      startAutoplay();
-    }
+    if (Math.abs(distance) > 45) showSlide(activeIndex + (distance < 0 ? 1 : -1));
     touchStartX = null;
   }, { passive: true });
 
+  if ("IntersectionObserver" in window) {
+    const nearObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { carouselNear = true; load(players[activeIndex]); nearObserver.disconnect(); }
+    }, { rootMargin: "600px 0px" });
+    nearObserver.observe(carousel);
+    new IntersectionObserver(([entry]) => {
+      carouselInView = entry.isIntersecting;
+      sync();
+    }, { threshold: 0.35 }).observe(carousel);
+  } else {
+    carouselNear = true;
+    carouselInView = true;
+  }
+
   showSlide(0);
-  startAutoplay();
 }
 
 /* ---------- Motion (GSAP + ScrollTrigger + Lenis) ---------- */
