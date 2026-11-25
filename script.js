@@ -173,9 +173,56 @@ if (email && emailLink) emailLink.href = `mailto:${email}`;
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
 })();
 
+/* ---------- Projetos: os dados vêm de projetos.json e viram abas + slides ---------- */
+
+// troca caracteres especiais do HTML para que um texto do JSON nunca vire código na página
+const escapar = (texto) =>
+  String(texto).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+// busca a lista de projetos no servidor e devolve um array de objetos
+async function buscarProjetos() {
+  const resposta = await fetch("projetos.json");
+
+  if(!resposta.ok) {
+    throw new Error("Não consegui carregar o arquivo de projetos");
+  }
+
+  return await resposta.json();
+}
+
+function criarAba(projeto) {
+  return `<button class="carousel-tab" type="button" data-carousel-dot>${escapar(projeto.nome)}</button>`;
+}
+
+function criarSlide(projeto, indice) {
+  const { nome, titulo, descricao, url, video } = projeto;
+  return `
+    <article class="project-slide" data-slide="${indice}">
+      <div class="project-shot">
+        <video class="project-video" data-demo-video data-src="${escapar(video.desktop)}" data-src-mobile="${escapar(video.mobile)}" poster="${escapar(video.poster)}" muted playsinline preload="none" aria-label="${escapar(video.legenda)}"></video>
+        <button class="video-toggle" type="button" data-video-toggle aria-label="Reproduzir vídeo"><span class="video-toggle-icon" aria-hidden="true"></span></button>
+        <span class="video-progress" aria-hidden="true"><span data-video-progress></span></span>
+      </div>
+      <div class="slide-caption">
+        <div><span class="slide-category">${escapar(nome)}</span><h3>${escapar(titulo)}</h3><p>${escapar(descricao)}</p></div>
+        <a class="project-live-link" href="${escapar(url)}" target="_blank" rel="noopener noreferrer">Visitar o site</a>
+      </div>
+    </article>`;
+}
+
+function montarProjetos(carousel, projetos) {
+  carousel.querySelector("[data-carousel-tabs]").innerHTML = projetos.map(criarAba).join("");
+  carousel.querySelector("[data-carousel-track]").innerHTML = projetos.map(criarSlide).join("");
+}
+
+function mostrarErroProjetos(carousel) {
+  carousel.querySelector("[data-carousel-tabs]").hidden = true;
+  carousel.querySelector("[data-carousel-track]").innerHTML =
+    '<p class="carousel-error">Não foi possível carregar os projetos agora. Tente recarregar a página.</p>';
+}
+
 /* ---------- Carousel: one recorded project per slide ---------- */
-const carousel = document.querySelector("[data-carousel]");
-if (carousel) {
+function iniciarCarrossel(carousel) {
   const track = carousel.querySelector("[data-carousel-track]");
   const slides = [...carousel.querySelectorAll("[data-slide]")];
   const tabs = [...carousel.querySelectorAll("[data-carousel-dot]")];
@@ -295,11 +342,28 @@ if (carousel) {
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const motionLibsReady = typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined";
 
-if (prefersReducedMotion || !motionLibsReady) {
-  root.classList.remove("motion");
-} else {
-  initMotion();
+// a ordem importa: buscar os projetos → montar os slides → ligar o carrossel → animar a página
+async function iniciarPagina() {
+  const carousel = document.querySelector("[data-carousel]");
+  if (carousel) {
+    try {
+      const projetos = await buscarProjetos();
+      montarProjetos(carousel, projetos);
+      iniciarCarrossel(carousel);
+    } catch (erro) {
+      console.error("Não foi possível carregar os projetos:", erro);
+      mostrarErroProjetos(carousel);
+    }
+  }
+
+  if (prefersReducedMotion || !motionLibsReady) {
+    root.classList.remove("motion");
+  } else {
+    initMotion();
+  }
 }
+
+iniciarPagina();
 
 /* Wrap every word of an element in spans, keeping nested elements (e.g. the gradient accent). */
 function splitWords(element, wordClass, innerClass) {

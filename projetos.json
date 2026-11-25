@@ -1,0 +1,26 @@
+[
+  {
+    "nome": "MotaLab Clínica",
+    "titulo": "O site em uso, do começo ao cadastro.",
+    "descricao": "Gravação navegando pelo site: combos de exames, equipe, Cartão MotaLab e cadastro.",
+    "url": "https://motalabclinica.com.br",
+    "video": {
+      "desktop": "assets/motalab-demo.mp4",
+      "mobile": "assets/motalab-demo-mobile.mp4",
+      "poster": "assets/motalab-demo-poster.webp",
+      "legenda": "Gravação de tela navegando pelo site da MotaLab Clínica: combos de exames, equipe de especialistas, Cartão MotaLab e cadastro"
+    }
+  },
+  {
+    "nome": "EL Saúde & Estética",
+    "titulo": "Da escolha do procedimento ao agendamento.",
+    "descricao": "Gravação navegando pelo site: procedimentos, antes e depois, agendamento com assistente virtual e dúvidas.",
+    "url": "https://elsaudeestetica.com",
+    "video": {
+      "desktop": "assets/elsaude-demo.mp4",
+      "mobile": "assets/elsaude-demo-mobile.mp4",
+      "poster": "assets/elsaude-demo-poster.webp",
+      "legenda": "Gravação de tela navegando pelo site da EL Saúde & Estética: procedimentos, antes e depois, agendamento com assistente virtual e dúvidas frequentes"
+    }
+  }
+]
